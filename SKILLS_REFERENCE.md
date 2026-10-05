@@ -1,6 +1,6 @@
 # Dynatrace Uber-Skills — Full Reference
 
-**Version:** v4.0.0 — base dynatrace-for-ai skills no longer vendored; install [dynatrace-for-ai](https://github.com/Dynatrace/dynatrace-for-ai) first (v3: tenant-validated 2026-05-28; re-validated end-to-end + corrected 2026-06-03)  
+**Version:** v4.0.1 — base dynatrace-for-ai skills no longer vendored; install [dynatrace-for-ai](https://github.com/Dynatrace/dynatrace-for-ai) first (v3: tenant-validated 2026-05-28; re-validated end-to-end + corrected 2026-06-03)  
 **Author:** Chris LaBrado (Lead Solutions Engineer, Dynatrace)  
 **Substrate authority:** `dt-rcf` SKILL.md — all uber-skills inherit its phased execution model
 
@@ -168,7 +168,7 @@ All Tier-1/2 uber-skills support `-clean` for sanitized customer-shareable outpu
 
 **Design intent:** Closes the loop between RUM Web Vitals and the *backend cause* of regressions. Frontend / backend / network classification is the synthesis output.
 
-**Composed sub-skills:** `dt-obs-frontends` (AdvancedPerformance, RequestPerformance, RequestTimingAnalysis) + `dt-obs-tracing` (TraceCorrelation)
+**Composed sub-skills:** `dt-obs-frontends` (web-vitals, web-performance-analysis, slow-page-load-playbook, frontend-backend-linking) + `dt-obs-tracing` (entity-lookups)
 
 **Substrate notes:** Web Vitals are **metrics** (`dt.frontend.web.page.*`), not RUM events. Vitals `timeseries percentile(...)` requires an explicit `interval:` (default `1h`) — without it the auto-interval over-buckets and can collapse to 0 records over short windows. `BASELINE:<iso>` / `COMPARE:<iso>` are single instants (each defines `[point .. point + WINDOW_LEN]`). Degrades gracefully when metric dimensions are absent (tenant-aggregate scope instead of per-app).
 
@@ -215,7 +215,7 @@ All Tier-1/2 uber-skills support `-clean` for sanitized customer-shareable outpu
 
 **Design intent:** Funnel conversion delta with backend attribution. Identifies the largest drop-off, names the most-frequent NEXT action users took instead of progressing, and correlates to backend errors.
 
-**Composed sub-skills:** `dt-obs-frontends` (UserAction, NavigationPatterns, user-sessions) + `dt-obs-tracing` (TraceCorrelation)
+**Composed sub-skills:** `dt-obs-frontends` (user-actions, user-sessions, characteristics, web-performance-analysis) + `dt-obs-tracing` (request-attributes, entity-lookups)
 
 **Substrate notes:** Data source is `user.events`. UserAction matching on `interaction.name` exclusively — `user_action.name` has zero rows on most tenant families. A Phase 0b.0 live-vocabulary probe surfaces the actual `interaction.name` / `page.url.path` values and gates absent steps: only `click` is flagged `has_user_action == true` tenant-wide, so `change`/`scroll` steps exist as interactions but are correctly reported absent (not phantom funnel leaks).
 

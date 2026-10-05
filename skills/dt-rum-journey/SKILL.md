@@ -87,8 +87,8 @@ reads ONE targeted reference at start, ONCE per subagent, then derives queries.
 
 | Worker | Reference files (read ONCE at worker start) |
 |---|---|
-| W-funnel | `~/.agents/skills/dt-obs-frontends/SKILL.md` + `references/user-actions.md` + `references/web-performance-analysis.md` + `references/user-sessions.md` |
-| W-dropoff | `~/.agents/skills/dt-obs-frontends/references/user-sessions.md` + `references/user-actions.md` |
+| W-funnel | `~/.agents/skills/dt-obs-frontends/SKILL.md` + `references/characteristics.md` + `references/user-actions.md` + `references/user-sessions.md` |
+| W-dropoff | `~/.agents/skills/dt-obs-frontends/references/web-performance-analysis.md` + `references/user-actions.md` |
 | W-attribution | `~/.agents/skills/dt-obs-tracing/references/request-attributes.md` + `references/entity-lookups.md` |
 
 **Sanitization, URL format, Mermaid/ASCII diagram rules, and PDF generation:** identical to
@@ -102,7 +102,7 @@ unchanged.
 
 - RUM events: `fetch user.events` — filter by `frontend.name == "{APP}"`.
 - RUM sessions: `fetch user.sessions` — note dot-vs-underscore field-naming gotcha (see
-  `dt-obs-frontends/SKILL.md` › "Session Data"). Use **`dt.rum.session.id`** (NOT
+  `dt-obs-frontends/SKILL.md` › "Data Model"). Use **`dt.rum.session.id`** (NOT
   `dt.rum.session_id`).
 - Session correlation: **`dt.rum.session.id`** uniquely identifies a session; **`dt.rum.user_tag`**
   (when set by `dtrum.identifyUser()` in the instrumented frontend) identifies a logged-in user
@@ -431,8 +431,8 @@ RETURN only this PhaseResult shape (JSON). Nothing else.
 #### W-funnel — Per-step session counts + conversion
 
 **REFERENCE-DRIVEN.** Read `~/.agents/skills/dt-obs-frontends/SKILL.md` ›
-"Event Characteristics" + "Session Data", `references/web-performance-analysis.md` ›
-"Page Views Overview", `references/user-actions.md` › "User Action Overview" and
+"Data Model" + "Common Filters", `references/characteristics.md` › "Event Characteristics",
+`references/user-sessions.md` › "Page Views Overview", `references/user-actions.md` › "User Action Overview" and
 "Actions by Interaction", `references/user-sessions.md` › "Core Session Metrics". Take the
 patterns; apply the scoping below.
 
@@ -531,7 +531,7 @@ Compute and report (in PhaseResult):
 
 #### W-dropoff — What did leakers do instead?
 
-**REFERENCE-DRIVEN.** Read `~/.agents/skills/dt-obs-frontends/references/user-sessions.md` ›
+**REFERENCE-DRIVEN.** Read `~/.agents/skills/dt-obs-frontends/references/web-performance-analysis.md` ›
 "Internal Navigation Flows" + "Page Reload Analysis" and `references/user-actions.md` ›
 "Interrupted Actions" + "Timed-Out Actions". Apply the dt-rum-journey scoping.
 

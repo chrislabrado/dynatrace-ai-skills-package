@@ -1,6 +1,6 @@
 # Dynatrace AI Skills Package
 
-**Version 4.0.0** · Requires [Dynatrace for AI](https://github.com/Dynatrace/dynatrace-for-ai) — install it first.
+**Version 4.0.1** · Requires [Dynatrace for AI](https://github.com/Dynatrace/dynatrace-for-ai) — install it first.
 
 A collection of AI agent skills for proactive, agentic observability on Dynatrace — compatible with **Claude Code**, **GitHub Copilot**, **OpenAI Codex**, and any MCP-compatible AI client. Authored and tenant-validated by Chris LaBrado, Lead Solutions Engineer, Dynatrace.
 

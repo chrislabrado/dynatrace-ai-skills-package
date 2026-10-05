@@ -84,7 +84,7 @@ metric changes upstream, only the reference needs fixing.
 |---|---|
 | W-vitals | `~/.agents/skills/dt-obs-frontends/references/web-vitals.md` (vital metric names + `timeseries percentile()` patterns) |
 | W-regressions | (Synthesizer worker — reads no reference. Consumes W-vitals output, applies regression thresholds, emits regressed-page list.) |
-| W-attribution | `~/.agents/skills/dt-obs-frontends/references/web-performance-analysis.md` + `frontend-backend-linking.md` + `~/.agents/skills/dt-obs-tracing/references/entity-lookups.md` + `request-attributes.md` |
+| W-attribution | `~/.agents/skills/dt-obs-frontends/references/web-performance-analysis.md` + `slow-page-load-playbook.md` + `frontend-backend-linking.md` + `~/.agents/skills/dt-obs-tracing/references/entity-lookups.md` + `request-attributes.md` |
 
 ---
 
@@ -123,14 +123,14 @@ flags — never put `from:`/`to:` in the DQL.
 |------|--------------|
 | `~/.agents/skills/dt-obs-frontends/SKILL.md` | Always — W-vitals |
 | `~/.agents/skills/dt-obs-frontends/references/web-vitals.md` | Always — vital metric names + `timeseries percentile()` patterns |
-| `~/.agents/skills/dt-obs-frontends/references/web-performance-analysis.md` | Conditional — only if `--with-geo` AND probe succeeds (geo dimension on metrics is v2-gated) |
+| `~/.agents/skills/dt-obs-frontends/references/web-performance-analysis.md` › "Request Duration Performance" (by `geo.country.iso_code`) | Conditional — only if `--with-geo` AND probe succeeds (geo dimension on metrics is v2-gated) |
 
 ### W-attribution — dt-obs-frontends + dt-obs-tracing
 
 | File | When to read |
 |------|--------------|
 | `~/.agents/skills/dt-obs-frontends/references/web-performance-analysis.md` | Always — `dt.frontend.request.duration` timeseries + browser/device split |
-| `~/.agents/skills/dt-obs-frontends/references/web-performance-analysis.md` | Always — TTFB decomposition (DNS / connect / TLS / server / download) |
+| `~/.agents/skills/dt-obs-frontends/references/slow-page-load-playbook.md` › "Backend latency (high TTFB)" + "Network issues" | Always — TTFB decomposition (DNS / connect / TLS / server / download) |
 | `~/.agents/skills/dt-obs-frontends/references/frontend-backend-linking.md` | Always — trace.id linkage from `user.events` to spans (backend attribution) |
 | `~/.agents/skills/dt-obs-tracing/references/entity-lookups.md` | Always — `getNodeName(dt.smartscape.service)` for backend service names in correlation output |
 | `~/.agents/skills/dt-obs-tracing/references/request-attributes.md` | Conditional — only if W-attribution finds custom `request_attribute.*` on the joined spans (rare for RUM-driven traces; useful for B2B portals with custom client headers) |
@@ -886,7 +886,7 @@ with the largest LCP delta crossing the LCP threshold; surface it as
 #### W-attribution (Attribution Worker)
 
 **REFERENCE-DRIVEN — read the bundle ONCE.** `web-performance-analysis.md` (XHR
-duration percentiles), `web-performance-analysis.md` (TTFB decomposition into DNS /
+duration percentiles), `slow-page-load-playbook.md` (TTFB decomposition into DNS /
 connect / TLS / server / download), `frontend-backend-linking.md` (frontend→backend join),
 plus `entity-lookups.md` (service name resolution) from dt-obs-tracing. Read once
 per subagent.
@@ -931,7 +931,7 @@ attribution targets.
 
 For each page returned by the candidate-page query above:
 
-1. **Top XHRs by duration delta** (web-performance-analysis.md + web-performance-analysis.md):
+1. **Top XHRs by duration delta** (web-performance-analysis.md + slow-page-load-playbook.md):
 
 <!-- VALIDATE: run via dtctl query against tenant before first production use -->
 ```dql
@@ -973,8 +973,8 @@ fetch user.events, from: toTimestamp("{COMPARE.from}"), to: toTimestamp("{COMPAR
 | limit 10
 ```
 
-3. **Backend trace correlation** (frontend-backend-linking.md "Backend Service Impact on
-Frontend", adapted):
+3. **Backend trace correlation** (frontend-backend-linking.md "Slow Requests with Backend
+Traces", adapted):
 
 <!-- VALIDATE: run via dtctl query against tenant before first production use -->
 ```dql
@@ -1299,7 +1299,7 @@ evidence-only synthesis.]
 | Pages evaluated | {N} |
 | Pages regressed | {N} |
 | Pages excluded (low samples) | {N} |
-| Sub-Skills Consulted | dt-obs-frontends (web-vitals, web-performance-analysis, frontend-backend-linking); dt-obs-tracing (entity-lookups) |
+| Sub-Skills Consulted | dt-obs-frontends (web-vitals, web-performance-analysis, slow-page-load-playbook, frontend-backend-linking); dt-obs-tracing (entity-lookups) |
 | Davis CoPilot | {Used / Unavailable} |
 
 ### dt-dem-vitals Telemetry
@@ -1307,7 +1307,7 @@ evidence-only synthesis.]
 |---|---|---|---|
 | W-vitals | dt-obs-frontends/web-vitals | … | … |
 | W-regressions | (synthesizer) | … | … |
-| W-attribution | dt-obs-frontends/Trace+RequestTiming | … | … |
+| W-attribution | dt-obs-frontends/frontend-backend-linking+slow-page-load-playbook | … | … |
 
 ## Appendix B: Glossary
 [Include ONLY if FULL_APPENDIX == true. Cover INP/LCP/CLS/FCP/TTFB definitions,
@@ -1457,7 +1457,7 @@ Regression Class Distribution
 | Worker | Sub-Skill | Findings | Gaps |
 | W-vitals | dt-obs-frontends/web-vitals | … | … |
 | W-regressions | (synthesizer) | … | … |
-| W-attribution | dt-obs-frontends/Trace+RequestTiming | … | … |
+| W-attribution | dt-obs-frontends/frontend-backend-linking+slow-page-load-playbook | … | … |
 ```
 
 If CLEAN_MODE, append the sanitization key to console (never to file) per dt-rca
