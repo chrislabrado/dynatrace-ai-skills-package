@@ -1,6 +1,6 @@
 # Dynatrace Uber-Skills — Full Reference
 
-**Version:** v4.0.1 — base dynatrace-for-ai skills no longer vendored; install [dynatrace-for-ai](https://github.com/Dynatrace/dynatrace-for-ai) first (v3: tenant-validated 2026-05-28; re-validated end-to-end + corrected 2026-06-03)  
+**Version:** v4.0.2 — base dynatrace-for-ai skills no longer vendored; install [dynatrace-for-ai](https://github.com/Dynatrace/dynatrace-for-ai) first (v3: tenant-validated 2026-05-28; re-validated end-to-end + corrected 2026-06-03)  
 **Author:** Chris LaBrado (Lead Solutions Engineer, Dynatrace)  
 **Substrate authority:** `dt-rcf` SKILL.md — all uber-skills inherit its phased execution model
 
