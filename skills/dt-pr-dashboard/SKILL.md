@@ -678,11 +678,11 @@ entity and filtered for the failure signature (e.g., `IDENTITY_INSERT`, OOM, tim
 **4.5 — Deploy:**
 
 ```bash
-bash ~/.claude/skills/dt-app-dashboards/scripts/deploy_dashboard.sh /tmp/<problem-id>-dashboard.json
+dtctl apply dashboard -o yaml -f /tmp/<problem-id>-dashboard.json
 ```
 
-The script validates all queries and blocks on failures.
-On success: prints URL, deletes the local file.
+`dtctl apply` validates the dashboard automatically; fix **all** reported errors and re-apply.
+On success it outputs the deployment result (action, id, name, url) — present the URL to the user.
 
 ---
 
@@ -776,7 +776,7 @@ that answers the right question for an operator in the context of an active inci
 | `dt-obs-logs` | Phase 2 log queries for ERROR/AVAILABILITY categories |
 | `dt-obs-tracing` | Phase 2 span queries for SLOWDOWN category |
 | `dt-obs-services` | Service metric timeseries — `dt.service.request.*` metrics |
-| `dt-app-dashboards` | Phase 4 JSON structure, deploy_dashboard.sh, tile/layout schema |
+| `dt-app-dashboards` | Phase 4 JSON structure, `dtctl apply dashboard`, tile/layout schema |
 
 Do NOT use `dt-rca` or `dt-rcf`.
 

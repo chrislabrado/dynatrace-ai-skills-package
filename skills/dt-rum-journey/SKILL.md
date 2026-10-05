@@ -87,8 +87,8 @@ reads ONE targeted reference at start, ONCE per subagent, then derives queries.
 
 | Worker | Reference files (read ONCE at worker start) |
 |---|---|
-| W-funnel | `~/.agents/skills/dt-obs-frontends/SKILL.md` + `references/UserAction.md` + `references/PageViewAnalysis.md` + `references/user-sessions.md` |
-| W-dropoff | `~/.agents/skills/dt-obs-frontends/references/NavigationPatterns.md` + `references/UserAction.md` |
+| W-funnel | `~/.agents/skills/dt-obs-frontends/SKILL.md` + `references/user-actions.md` + `references/web-performance-analysis.md` + `references/user-sessions.md` |
+| W-dropoff | `~/.agents/skills/dt-obs-frontends/references/user-sessions.md` + `references/user-actions.md` |
 | W-attribution | `~/.agents/skills/dt-obs-tracing/references/request-attributes.md` + `references/entity-lookups.md` |
 
 **Sanitization, URL format, Mermaid/ASCII diagram rules, and PDF generation:** identical to
@@ -431,8 +431,8 @@ RETURN only this PhaseResult shape (JSON). Nothing else.
 #### W-funnel — Per-step session counts + conversion
 
 **REFERENCE-DRIVEN.** Read `~/.agents/skills/dt-obs-frontends/SKILL.md` ›
-"Event Characteristics" + "Session Data", `references/PageViewAnalysis.md` ›
-"Page Views Overview", `references/UserAction.md` › "User Action Overview" and
+"Event Characteristics" + "Session Data", `references/web-performance-analysis.md` ›
+"Page Views Overview", `references/user-actions.md` › "User Action Overview" and
 "Actions by Interaction", `references/user-sessions.md` › "Core Session Metrics". Take the
 patterns; apply the scoping below.
 
@@ -531,8 +531,8 @@ Compute and report (in PhaseResult):
 
 #### W-dropoff — What did leakers do instead?
 
-**REFERENCE-DRIVEN.** Read `~/.agents/skills/dt-obs-frontends/references/NavigationPatterns.md` ›
-"Internal Navigation Flows" + "Page Reload Analysis" and `references/UserAction.md` ›
+**REFERENCE-DRIVEN.** Read `~/.agents/skills/dt-obs-frontends/references/user-sessions.md` ›
+"Internal Navigation Flows" + "Page Reload Analysis" and `references/user-actions.md` ›
 "Interrupted Actions" + "Timed-Out Actions". Apply the dt-rum-journey scoping.
 
 **W-funnel runs first in elapsed time but we dispatch in parallel — so this worker takes the
@@ -606,7 +606,7 @@ fetch user.sessions, from:toTimestamp("{COMPARE.from}")-8h, to:toTimestamp("{COM
 | limit 10
 ```
 
-3. **Interrupted/timed-out user actions AT the leak step** (per `UserAction.md` › "Interrupted
+3. **Interrupted/timed-out user actions AT the leak step** (per `user-actions.md` › "Interrupted
    Actions" + "Timed-Out Actions"):
 
 <!-- VALIDATED on tenant 2026-05-28 — substrate confirmed (interaction.name canonical, user_action.name not populated on this tenant family) -->

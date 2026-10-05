@@ -463,7 +463,7 @@ Build sections in this order:
                   query: a targeted log/event fetch that returns 0 records once the fix is applied
                   ⚠ EXCEPTION: always from:now()-15m (live state — verifies fix is currently holding)
                   timeframe: omit tileTimeframe; use from:now()-15m in DQL
-                  note: 0 records on deploy_notebook.sh validation is EXPECTED for verification queries
+                  note: 0 records on `dtctl apply notebook` validation is EXPECTED for verification queries
                         (the incident is already resolved). The deploy script will warn but not block.
 ```
 
@@ -497,11 +497,11 @@ For exception sections (Davis problems, related problems, verification), omit
 **4.4 — Deploy**
 
 ```bash
-bash ~/.claude/skills/dt-app-notebooks/scripts/deploy_notebook.sh /tmp/<problem-id>-notebook.json
+dtctl apply notebook -o yaml -f /tmp/<problem-id>-notebook.json
 ```
 
-The script validates all DQL queries and blocks on failures.
-On success it prints the notebook URL — relay that to the user.
+`dtctl apply` validates the notebook automatically; fix **all** reported errors and re-apply.
+On success it outputs the deployment result (action, id, name, url) — relay the URL to the user.
 
 ---
 
@@ -554,7 +554,7 @@ On success it prints the notebook URL — relay that to the user.
 | `dt-dql-essentials` | DQL syntax, field escaping, makeTimeseries vs timeseries |
 | `dt-obs-logs` | Phase 2 log queries for ERROR/AVAILABILITY categories |
 | `dt-obs-tracing` | Phase 2 span queries for SLOWDOWN category |
-| `dt-app-notebooks` | Phase 4 JSON structure, deploy_notebook.sh, section types |
+| `dt-app-notebooks` | Phase 4 JSON structure, `dtctl apply notebook`, section types |
 
 Do NOT use `dt-rca` or `dt-rcf`.
 

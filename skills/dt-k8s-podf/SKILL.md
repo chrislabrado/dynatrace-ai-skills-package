@@ -1548,11 +1548,11 @@ timestamp identified by W-events.
 **4b.4 — Deploy**
 
 ```bash
-bash ~/.claude/skills/dt-app-notebooks/scripts/deploy_notebook.sh /tmp/{NS}-{WORKLOAD}-podf.json
+dtctl apply notebook -o yaml -f /tmp/{NS}-{WORKLOAD}-podf.json
 ```
 
-The deploy script validates all DQL queries and blocks on failures. On success
-it prints the notebook URL — relay that to the user via Phase 7 output.
+`dtctl apply` validates the notebook automatically; fix all reported errors and re-apply. On success
+it outputs the notebook URL — relay that to the user via Phase 7 output.
 
 ---
 
@@ -1768,7 +1768,7 @@ the next step. Report findings as-is but add the banner:
 | `dt-obs-logs` | W-logs (search, filter, pattern analysis, error-rate timeseries) |
 | `dt-obs-tracing` | W-traces (failure-detection, http/rpc/database spans based on detected protocol) |
 | `dt-dql-essentials` | DQL syntax + smartscapeNodes / getNodeName signatures (Phase 0c) |
-| `dt-pr-notebooks` | Phase 4b notebook JSON authoring + deploy_notebook.sh pattern (only when `--notebook`) |
+| `dt-pr-notebooks` | Phase 4b notebook JSON authoring + `dtctl apply notebook` pattern (only when `--notebook`) |
 | `dt-rca` | Phase 1.14 sanitization map; PDF generation; Mermaid + ASCII rules |
 | `dt-rcf` | Worker dispatch protocol, Absence Gate, dtctl auth hygiene |
 

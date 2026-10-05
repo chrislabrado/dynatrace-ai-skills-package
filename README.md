@@ -1,5 +1,7 @@
 # Dynatrace AI Skills Package
 
+**Version 4.0.0** · Requires [Dynatrace for AI](https://github.com/Dynatrace/dynatrace-for-ai) — install it first.
+
 A collection of AI agent skills for proactive, agentic observability on Dynatrace — compatible with **Claude Code**, **GitHub Copilot**, **OpenAI Codex**, and any MCP-compatible AI client. Authored and tenant-validated by Chris LaBrado, Lead Solutions Engineer, Dynatrace.
 
 These skills compose Dynatrace telemetry (spans, logs, metrics, events, bizevents, RUM, AppSec, SLOs) with agentic parallel workers and Davis CoPilot synthesis to produce polished Markdown artifacts (PDF optional via `--pdf`), deployed notebooks, and deployed dashboards — all from a single slash command. Each skill follows a reference-driven architecture: workers read one targeted DQL reference file at runtime, so queries stay current without hardcoding.
@@ -8,7 +10,9 @@ These skills compose Dynatrace telemetry (spans, logs, metrics, events, bizevent
 
 ## Setup
 
-Point your AI assistant at this repo and say **"set this up"**. Guided by `CLAUDE.md`, Claude enters **plan mode**, shows the catalog, and lets you **pick specific skills or choose "all"** — presenting a plan for approval before anything is installed.
+> **Install [Dynatrace/dynatrace-for-ai](https://github.com/Dynatrace/dynatrace-for-ai) first.** This package contains only new skills that build on it — it does not ship the official `dt-obs-*`, `dt-dql-essentials`, or `dt-app-*` skills, and will not work without them. The installer checks and stops if they're missing.
+
+Point your AI assistant at this repo and say **"set this up"**, or run `./install.sh` directly. Guided by `CLAUDE.md`, Claude enters **plan mode**, shows the catalog, and lets you **pick specific skills or choose "all"** — presenting a plan for approval before anything is installed.
 
 ## Skill Catalog
 
@@ -58,27 +62,12 @@ Framework-aware observability brief for GenAI and LLM apps instrumented with Ope
 ---
 
 
-### Foundations & Building Blocks (added 2026-06-22)
+### Foundations & Building Blocks
 
-Lower-level query and builder skills the analysis suite composes on — observability data access, dashboard/notebook builders, DQL guidance, and cloud governance.
-
-- [`/dt-obs-hosts`](skills/dt-obs-hosts/SKILL.md) — Host and process metrics including CPU, memory, disk, network, containers, and process-level telemetry.
-- [`/dt-obs-services`](skills/dt-obs-services/SKILL.md) — Service performance monitoring with RED metrics (Rate, Errors, Duration) and runtime-specific telemetry for Java, .NET, Node.js, Python, PHP, and Go.
-- [`/dt-obs-logs`](skills/dt-obs-logs/SKILL.md) — Log querying, filtering, pattern analysis, and error rate calculation.
-- [`/dt-obs-tracing`](skills/dt-obs-tracing/SKILL.md) — Distributed traces, spans, service dependencies, and request flow analysis.
-- [`/dt-obs-problems`](skills/dt-obs-problems/SKILL.md) — DAVIS problem analysis including root cause identification, impact assessment, and correlation with other telemetry.
-- [`/dt-obs-kubernetes`](skills/dt-obs-kubernetes/SKILL.md) — Kubernetes cluster, pod, node, and workload monitoring.
-- [`/dt-obs-aws`](skills/dt-obs-aws/SKILL.md) — AWS cloud resource monitoring including EC2, RDS, Lambda, ECS/EKS, VPC networking, load balancers, S3, DynamoDB, SQS/SNS, and cost optimization.
-- [`/dt-obs-azure`](skills/dt-obs-azure/SKILL.md) — Azure cloud resources including VMs, VMSS, SQL Database, Storage, AKS, App Service, Functions, VNet networking, load balancers, Event Hubs, Container Apps,…
-- [`/dt-obs-gcp`](skills/dt-obs-gcp/SKILL.md) — GCP cloud resources including Compute Engine, GKE, Cloud Run, Pub/Sub, VPC networking, DNS, IAM, Secret Manager, and monitoring.
-- [`/dt-obs-frontends`](skills/dt-obs-frontends/SKILL.md) — Real User Monitoring (RUM), Web Vitals, user sessions, mobile crashes, page performance, user interactions, and frontend errors.
 - [`/dt-obs-log-parser`](skills/dt-obs-log-parser/SKILL.md) — Log pattern detection, DQL parse statement generation, and OpenPipeline processing rule deployment.
-- [`/dt-obs-predictive-analytics`](skills/dt-obs-predictive-analytics/SKILL.md) — Predictive analytics for Dynatrace — time series forecasting with the timeseries-forecast tool, capacity saturation planning, trend and anomaly detection a…
-- [`/dt-dql-essentials`](skills/dt-dql-essentials/SKILL.md) — Core DQL syntax rules, common pitfalls, and query patterns.
-- [`/dt-app-dashboards`](skills/dt-app-dashboards/SKILL.md) — Work with Dynatrace dashboards - create, modify, query, and analyze dashboard JSON including tiles, layouts, DQL queries, variables, and visualizations.
-- [`/dt-app-notebooks`](skills/dt-app-notebooks/SKILL.md) — Work with Dynatrace notebooks - create, modify, query, and analyze notebook JSON.
-- [`/dt-migration`](skills/dt-migration/SKILL.md) — Migrate Dynatrace classic and Gen2 entity-based DQL to Smartscape equivalents.
 - [`/dt-cloud-compliance`](skills/dt-cloud-compliance/SKILL.md) — Verify Dynatrace internal cloud resource compliance after any cloud work.
+
+The base `dt-obs-*`, `dt-dql-essentials`, `dt-app-dashboards`, `dt-app-notebooks`, and `dt-migration` skills come from [dynatrace-for-ai](https://github.com/Dynatrace/dynatrace-for-ai) and are no longer vendored here (removed in v4.0.0).
 
 ## ⚠️ 2026-06-03 UPDATE — change notes
 
@@ -138,15 +127,18 @@ dtctl auth whoami
 
 These skills consume reference files from the [dynatrace-for-ai](https://github.com/Dynatrace/dynatrace-for-ai) skills package as their DQL authority. The worker agents read those reference files at runtime.
 
-**Install dynatrace-for-ai skills:**
+**Install dynatrace-for-ai skills (required, before this package):**
 ```bash
-# Clone the repo
+# skills.sh
+npx skills add dynatrace/dynatrace-for-ai
+# or the Claude Code plugin
+claude plugin install dynatrace@claude-plugins-official
+# or manually
 git clone https://github.com/Dynatrace/dynatrace-for-ai.git
-
-# Install skills to Claude Code
 cp -r dynatrace-for-ai/skills/* ~/.claude/skills/
-# or install via Claude Code's plugin system
 ```
+
+`./install.sh` refuses to install this package until these skills are found in `~/.claude/skills`, `~/.agents/skills`, or the Claude Code plugin cache.
 
 Skills consumed by this package:
 - `dt-obs-problems` — Davis problem patterns, trending, impact analysis
@@ -169,11 +161,11 @@ Skills consumed by this package:
 # 1. Clone this repo
 git clone https://github.com/clabrado/dynatrace-ai-skills-package.git
 
-# 2. Copy skills to Claude Code skills directory
-cp -r dynatrace-ai-skills-package/skills/* ~/.claude/skills/
-
-# 3. Verify skills are discoverable (restart Claude Code session if needed)
-ls ~/.claude/skills/ | grep dt-
+# 2. Install (checks for dynatrace-for-ai first; stops if it's missing)
+cd dynatrace-ai-skills-package
+./install.sh                      # all skills
+./install.sh dt-rcf dt-slo-burn   # or just the ones you want
+./install.sh --check              # only verify the prerequisite
 ```
 
 > **Note:** Skills are `.md` files inside named directories. Claude Code and other MCP-compatible AI clients auto-discover them from `~/.claude/skills/` or the equivalent configured skills directory.

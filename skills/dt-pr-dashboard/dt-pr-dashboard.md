@@ -76,7 +76,7 @@ flowchart TD
         direction TB
         F1["4.1 Validate ALL queries via dtctl"]
         F2["4.2 Build dashboard JSON (tiles + layouts)"]
-        F3["4.3 deploy_dashboard.sh → URL"]
+        F3["4.3 dtctl apply dashboard → URL"]
         F1 --> F2 --> F3
     end
 
@@ -189,7 +189,7 @@ Total tiles: 18 (with K8s) / 14 (without K8s). All tile IDs must have matching l
 | `dt-obs-logs` | Log queries for ERROR/AVAILABILITY categories |
 | `dt-obs-tracing` | Span queries for SLOWDOWN category |
 | `dt-obs-services` | Service metric timeseries (`dt.service.request.*`) |
-| `dt-app-dashboards` | Dashboard JSON schema, tile/layout structure, `deploy_dashboard.sh` |
+| `dt-app-dashboards` | Dashboard JSON schema, tile/layout structure, `dtctl apply dashboard` |
 
 **Excluded by design:** `dt-rca`, `dt-rcf`
 

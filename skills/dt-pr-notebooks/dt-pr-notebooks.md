@@ -86,7 +86,7 @@ flowchart TD
         F1["4.1 Compute epoch window"]
         F2["4.2 Validate ALL queries via dtctl"]
         F3["4.3 Write /tmp/<id>-notebook.json"]
-        F4["4.4 deploy_notebook.sh → URL"]
+        F4["4.4 dtctl apply notebook → URL"]
         F1 --> F2 --> F3 --> F4
     end
 
@@ -179,7 +179,7 @@ Section 14 is a DQL `[dql]` section (never a markdown code fence) that returns 0
 | `dt-dql-essentials` | DQL syntax, `makeTimeseries` vs `timeseries`, field escaping |
 | `dt-obs-logs` | Log queries for ERROR/AVAILABILITY categories |
 | `dt-obs-tracing` | Span queries for SLOWDOWN category |
-| `dt-app-notebooks` | Notebook JSON schema, `deploy_notebook.sh` |
+| `dt-app-notebooks` | Notebook JSON schema, `dtctl apply notebook` |
 
 **Excluded by design:** `dt-rca`, `dt-rcf`
 

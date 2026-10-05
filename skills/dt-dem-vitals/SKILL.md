@@ -82,9 +82,9 @@ metric changes upstream, only the reference needs fixing.
 
 | Phase | Reference file (read ONCE at worker start) |
 |---|---|
-| W-vitals | `~/.agents/skills/dt-obs-frontends/references/WebVitals.md` (vital metric names + `timeseries percentile()` patterns) |
+| W-vitals | `~/.agents/skills/dt-obs-frontends/references/web-vitals.md` (vital metric names + `timeseries percentile()` patterns) |
 | W-regressions | (Synthesizer worker — reads no reference. Consumes W-vitals output, applies regression thresholds, emits regressed-page list.) |
-| W-attribution | `~/.agents/skills/dt-obs-frontends/references/RequestPerformance.md` + `RequestTimingAnalysis.md` + `TraceCorrelation.md` + `~/.agents/skills/dt-obs-tracing/references/entity-lookups.md` + `request-attributes.md` |
+| W-attribution | `~/.agents/skills/dt-obs-frontends/references/web-performance-analysis.md` + `frontend-backend-linking.md` + `~/.agents/skills/dt-obs-tracing/references/entity-lookups.md` + `request-attributes.md` |
 
 ---
 
@@ -122,16 +122,16 @@ flags — never put `from:`/`to:` in the DQL.
 | File | When to read |
 |------|--------------|
 | `~/.agents/skills/dt-obs-frontends/SKILL.md` | Always — W-vitals |
-| `~/.agents/skills/dt-obs-frontends/references/WebVitals.md` | Always — vital metric names + `timeseries percentile()` patterns |
-| `~/.agents/skills/dt-obs-frontends/references/AdvancedPerformance.md` | Conditional — only if `--with-geo` AND probe succeeds (geo dimension on metrics is v2-gated) |
+| `~/.agents/skills/dt-obs-frontends/references/web-vitals.md` | Always — vital metric names + `timeseries percentile()` patterns |
+| `~/.agents/skills/dt-obs-frontends/references/web-performance-analysis.md` | Conditional — only if `--with-geo` AND probe succeeds (geo dimension on metrics is v2-gated) |
 
 ### W-attribution — dt-obs-frontends + dt-obs-tracing
 
 | File | When to read |
 |------|--------------|
-| `~/.agents/skills/dt-obs-frontends/references/RequestPerformance.md` | Always — `dt.frontend.request.duration` timeseries + browser/device split |
-| `~/.agents/skills/dt-obs-frontends/references/RequestTimingAnalysis.md` | Always — TTFB decomposition (DNS / connect / TLS / server / download) |
-| `~/.agents/skills/dt-obs-frontends/references/TraceCorrelation.md` | Always — trace.id linkage from `user.events` to spans (backend attribution) |
+| `~/.agents/skills/dt-obs-frontends/references/web-performance-analysis.md` | Always — `dt.frontend.request.duration` timeseries + browser/device split |
+| `~/.agents/skills/dt-obs-frontends/references/web-performance-analysis.md` | Always — TTFB decomposition (DNS / connect / TLS / server / download) |
+| `~/.agents/skills/dt-obs-frontends/references/frontend-backend-linking.md` | Always — trace.id linkage from `user.events` to spans (backend attribution) |
 | `~/.agents/skills/dt-obs-tracing/references/entity-lookups.md` | Always — `getNodeName(dt.smartscape.service)` for backend service names in correlation output |
 | `~/.agents/skills/dt-obs-tracing/references/request-attributes.md` | Conditional — only if W-attribution finds custom `request_attribute.*` on the joined spans (rare for RUM-driven traces; useful for B2B portals with custom client headers) |
 
@@ -245,12 +245,12 @@ dimensions in v1.** The orchestrator:
 
 ### Backend Attribution via trace.id
 
-The frontend→backend join lives in `TraceCorrelation.md`. dt-dem-vitals uses the
+The frontend→backend join lives in `frontend-backend-linking.md`. dt-dem-vitals uses the
 "Slow Requests with Backend Traces" + "Backend Service Impact on Frontend" patterns
 verbatim; **do not derive a custom join**.
 
 ```dql
--- Pattern (from TraceCorrelation.md, adapted to the regression page set):
+-- Pattern (from frontend-backend-linking.md, adapted to the regression page set):
 fetch user.events, from: toTimestamp("{COMPARE.from}"), to: toTimestamp("{COMPARE.to}")
 | filter frontend.name == "{APP_NAME}"
 | filter characteristics.has_request == true
@@ -687,7 +687,7 @@ RETURN only this PhaseResult shape (JSON). Nothing else.
 #### W-vitals (Vitals Worker)
 
 **REFERENCE-DRIVEN — dt-dem-vitals carries NO RUM DQL beyond bootstrap.** Read
-`~/.agents/skills/dt-obs-frontends/references/WebVitals.md` ONCE (all vital
+`~/.agents/skills/dt-obs-frontends/references/web-vitals.md` ONCE (all vital
 metric names + percentile patterns). Read once per subagent; never re-read.
 
 **dt-dem-vitals scoping/hygiene for EVERY vitals query (tenant-validated):**
@@ -885,9 +885,9 @@ with the largest LCP delta crossing the LCP threshold; surface it as
 
 #### W-attribution (Attribution Worker)
 
-**REFERENCE-DRIVEN — read the bundle ONCE.** `RequestPerformance.md` (XHR
-duration percentiles), `RequestTimingAnalysis.md` (TTFB decomposition into DNS /
-connect / TLS / server / download), `TraceCorrelation.md` (frontend→backend join),
+**REFERENCE-DRIVEN — read the bundle ONCE.** `web-performance-analysis.md` (XHR
+duration percentiles), `web-performance-analysis.md` (TTFB decomposition into DNS /
+connect / TLS / server / download), `frontend-backend-linking.md` (frontend→backend join),
 plus `entity-lookups.md` (service name resolution) from dt-obs-tracing. Read once
 per subagent.
 
@@ -931,7 +931,7 @@ attribution targets.
 
 For each page returned by the candidate-page query above:
 
-1. **Top XHRs by duration delta** (RequestPerformance.md + RequestTimingAnalysis.md):
+1. **Top XHRs by duration delta** (web-performance-analysis.md + web-performance-analysis.md):
 
 <!-- VALIDATE: run via dtctl query against tenant before first production use -->
 ```dql
@@ -973,7 +973,7 @@ fetch user.events, from: toTimestamp("{COMPARE.from}"), to: toTimestamp("{COMPAR
 | limit 10
 ```
 
-3. **Backend trace correlation** (TraceCorrelation.md "Backend Service Impact on
+3. **Backend trace correlation** (frontend-backend-linking.md "Backend Service Impact on
 Frontend", adapted):
 
 <!-- VALIDATE: run via dtctl query against tenant before first production use -->
@@ -1299,13 +1299,13 @@ evidence-only synthesis.]
 | Pages evaluated | {N} |
 | Pages regressed | {N} |
 | Pages excluded (low samples) | {N} |
-| Sub-Skills Consulted | dt-obs-frontends (WebVitals, PageViewAnalysis, AdvancedPerformance, RequestPerformance, RequestTimingAnalysis, TraceCorrelation); dt-obs-tracing (entity-lookups) |
+| Sub-Skills Consulted | dt-obs-frontends (web-vitals, web-performance-analysis, frontend-backend-linking); dt-obs-tracing (entity-lookups) |
 | Davis CoPilot | {Used / Unavailable} |
 
 ### dt-dem-vitals Telemetry
 | Worker | Sub-Skill | Key Findings | Gaps |
 |---|---|---|---|
-| W-vitals | dt-obs-frontends/WebVitals | … | … |
+| W-vitals | dt-obs-frontends/web-vitals | … | … |
 | W-regressions | (synthesizer) | … | … |
 | W-attribution | dt-obs-frontends/Trace+RequestTiming | … | … |
 
@@ -1455,7 +1455,7 @@ Regression Class Distribution
 
 ### dt-dem-vitals Telemetry
 | Worker | Sub-Skill | Findings | Gaps |
-| W-vitals | dt-obs-frontends/WebVitals | … | … |
+| W-vitals | dt-obs-frontends/web-vitals | … | … |
 | W-regressions | (synthesizer) | … | … |
 | W-attribution | dt-obs-frontends/Trace+RequestTiming | … | … |
 ```
